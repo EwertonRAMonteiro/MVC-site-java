@@ -44,12 +44,26 @@ public class ClienteDao implements CRUD {
 		}
 		
 	public static void delete(int clienteId) {
+		sql = "DELETE FROM cliente WHERE id = ?";
+		
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, clienteId);
+			preparedStatement.executeUpdate();
+			
+			System.out.printf("[LOG] Cliente deletado com sucesso.");
+			
+			
+		} catch (SQLException e) {
+			System.out.printf("[ERROR] Deletar cliente falhou. Message:\n%s" + e.getMessage());
+			
+		}
 		
 	};
 	
 	public static List<Cliente> find(String pesquisa){
 		
-		sql = String.format("SELECT * FROM clientes WHERE cpf like '%s%%' OR nomeCompleto LIKE '%s%%' ", pesquisa, pesquisa);
+		sql = String.format("SELECT * FROM cliente WHERE nomeCompleto like '%s%%' OR cpf LIKE '%s%%' ", pesquisa, pesquisa);
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		
 		try {
@@ -75,22 +89,80 @@ public class ClienteDao implements CRUD {
                 
 			}
 			
-			System.out.printf("[ERROR] Busca de cliente feita. Message:\n%s");
+			System.out.printf("[LOG] Busca de cliente feita.");
 			return clientes;
 			
 		} catch(SQLException e) {
-			System.out.printf("[ERROR] busca falha. Message:\n%s" + e.getMessage());
+			System.out.printf("[ERROR] busca cliente falhou. Message:\n%s" + e.getMessage());
 			return null;
 			
 		}
 	}
 	
 	public static Cliente findByPk(int clienteId) {
-		return null;
+		
+		sql = String.format("SELECT * FROM cliente WHERE id = %d ", clienteId);
+		
+		
+		try {
+			Statement statement = connection.createStatement(); 
+			ResultSet resultSet = statement.executeQuery(sql);
+			
+			Cliente cliente = new Cliente();
+			
+			while (resultSet.next()) {
+								
+				cliente.setId(resultSet.getInt("id"));
+                cliente.setCpf(resultSet.getString("cpf"));
+                cliente.setNomeCompleto(resultSet.getString("nomeCompleto"));
+                cliente.setRua(resultSet.getString("rua"));
+                cliente.setBairro(resultSet.getString("bairro"));
+                cliente.setCep(resultSet.getString("cep"));
+                cliente.setCidade(resultSet.getString("cidade"));
+                cliente.setEstado(resultSet.getString("estado"));
+                cliente.setEmail(resultSet.getString("email"));
+                cliente.setNumero(resultSet.getString("numero"));
+                
+			}
+			
+			System.out.printf("[LOG] Busca por Chave feita.");
+			return cliente;
+			
+		} catch(SQLException e) {
+			System.out.printf("[ERROR] busca por Chave falhou. Message:\n%s" + e.getMessage());
+			return null;
+			
+		}
 	}
 	
 	public static void update(Cliente cliente) {
 		
-	}
+		sql = "UPDATE cliente SET cpf=?, nomeCompleto=?, rua=?, bairro=?, cep=?,"
+				+ " cidade=?, estado=?, email=?, numero=? WHERE id=?";
+		
+		 try {
+	            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+	            preparedStatement.setString(1, cliente.getCpf());
+	            preparedStatement.setString(2, cliente.getNomeCompleto());
+	            preparedStatement.setString(3, cliente.getRua());
+	            preparedStatement.setString(4, cliente.getBairro());
+	            preparedStatement.setString(5, cliente.getCep());
+	            preparedStatement.setString(6, cliente.getCidade());
+	            preparedStatement.setString(7, cliente.getEstado());
+	            preparedStatement.setString(8, cliente.getEmail());
+	            preparedStatement.setString(9, cliente.getNumero());
+	            preparedStatement.setInt(10, cliente.getId());
+
+	            preparedStatement.executeUpdate();
+	            
+	            System.out.println("[LOG] Update feito.");
+	            
+
+	        } catch (SQLException e) {
+	            System.out.printf("[ERROR] Update falhou. Message:\n%s", e.getMessage());
+	            
+	        }
+			
+		}
 
 }
