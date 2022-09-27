@@ -1,0 +1,32 @@
+@charset "ISO-8859-1";
+
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: 0;
+
+}
+
+header {
+    grid-area: header;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(60, 33, 104); 
+}
+
+/*  limitando o conteudo da nav para não colar nas bordas da pagina */
+
+#cont {
+    width: 80%;
+    height: 100%;
+    display: flex;
+
+}
+
+h1 {
+	text-align: center;
+}
